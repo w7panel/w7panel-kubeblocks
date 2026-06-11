@@ -1,0 +1,11 @@
+apiVersion: v2
+appVersion: 7.5.2
+dependencies:
+- alias: extra
+  name: kblib
+  repository: file://../kblib
+  version: 0.1.2
+description: A TiDB cluster Helm chart for KubeBlocks.
+name: tidb-cluster
+type: application
+version: 1.0.1

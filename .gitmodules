@@ -1,0 +1,3 @@
+[submodule "kodata/block-index"]
+	path = kodata/block-index
+	url = https://github.com/apecloud/block-index.git

@@ -1,0 +1,6 @@
+dependencies:
+- name: kblib
+  repository: file://../kblib
+  version: 0.1.2
+digest: sha256:ec51d36b7bac06a89f0fe807dc5e2b153b91e4bdc7c6917e480b70d60297a7e8
+generated: "2025-09-11T08:46:07.205551651Z"

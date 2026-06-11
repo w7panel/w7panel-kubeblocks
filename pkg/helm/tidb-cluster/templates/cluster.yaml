@@ -1,0 +1,83 @@
+apiVersion: apps.kubeblocks.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "kblib.clusterName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "tidb-cluster.labels" . | nindent 4 }}
+spec:
+  clusterDef: tidb  # ref clusterdefinition.name
+  terminationPolicy: {{ $.Values.extra.terminationPolicy }}
+  topology: cluster
+  componentSpecs:
+    {{- with $.Values.pd }}
+    - name: tidb-pd
+      serviceVersion: {{ default $.Chart.AppVersion $.Values.appVersionOverride }}
+      disableExporter: false
+      replicas: {{ .replicas | default 3 }}
+      {{- with .tolerations }}
+      tolerations: {{ .| toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .resources }}
+      resources:
+        limits:
+          cpu: {{ .limits.cpu | quote }}
+          memory: {{ print .limits.memory "Gi" | quote }}
+        requests:
+          cpu: {{ .requests.cpu | quote }}
+          memory: {{ print .requests.memory "Gi" | quote }}
+      {{- end }}
+      volumeClaimTemplates:
+      - name: data
+        spec:
+          storageClassName: {{ .persistence.data.storageClassName }}
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: {{ print .persistence.data.size "Gi" }}
+    {{- end }}
+    {{- with $.Values.tikv }}
+    - name: tikv
+      serviceVersion: {{ default $.Chart.AppVersion $.Values.appVersionOverride }}
+      disableExporter: false
+      replicas: {{ .replicas | default 3 }}
+      {{- with .tolerations }}
+      tolerations: {{ .| toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .resources }}
+      resources:
+        limits:
+          cpu: {{ .limits.cpu | quote }}
+          memory: {{ print .limits.memory "Gi" | quote }}
+        requests:
+          cpu: {{ .requests.cpu | quote }}
+          memory: {{ print .requests.memory "Gi" | quote }}
+      {{- end }}
+      volumeClaimTemplates:
+      - name: data
+        spec:
+          storageClassName: {{ .persistence.data.storageClassName }}
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: {{ print .persistence.data.size "Gi" }}
+    {{- end }}
+    {{- with $.Values.tidb }}
+    - name: tidb
+      serviceVersion: {{ default $.Chart.AppVersion $.Values.appVersionOverride }}
+      disableExporter: false
+      replicas: {{ .replicas | default 2 }}
+      {{- with .tolerations }}
+      tolerations: {{ .| toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .resources }}
+      resources:
+        limits:
+          cpu: {{ .limits.cpu | quote }}
+          memory: {{ print .limits.memory "Gi" | quote }}
+        requests:
+          cpu: {{ .requests.cpu | quote }}
+          memory: {{ print .requests.memory "Gi" | quote }}
+      {{- end }}
+    {{- end }}

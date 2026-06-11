@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: 0.1.2
+description: A Library Helm chart for KubeBlocks Addons Cluster.
+name: kblib
+type: library
+version: 0.1.2
