@@ -22,7 +22,7 @@ package kbcli
 import (
 	"context"
 	"fmt"
-	"kbcli-helper/pkg/format"
+	"github.com/w7panel/w7panel-kubeblocks/pkg/format"
 	"sort"
 	"strings"
 

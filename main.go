@@ -21,8 +21,8 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 
-	"kbcli-helper/pkg/helm"
-	"kbcli-helper/pkg/kbcli"
+	"github.com/w7panel/w7panel-kubeblocks/pkg/helm"
+	"github.com/w7panel/w7panel-kubeblocks/pkg/kbcli"
 )
 
 var (

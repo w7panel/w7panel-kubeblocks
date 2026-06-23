@@ -1,4 +1,4 @@
-module kbcli-helper
+module github.com/w7panel/w7panel-kubeblocks
 
 go 1.25.0
 
