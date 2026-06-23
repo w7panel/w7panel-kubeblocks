@@ -3,7 +3,6 @@
   tag_push:
     - env:
         - KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui
-        - KO_DOCKER_REPO=ccr.ccs.tencentyun.com/afan-public/w7panel-dev
         # export KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui && export KO_DOCKER_REPO=ccr.ccs.tencentyun.com/afan-public/w7panel 
       imports:
         - https://cnb.cool/i0358/mykey/-/blob/main/218.yml
@@ -27,7 +26,7 @@
         #   script: export KO_DOCKER_REPO=ccr.ccs.tencentyun.com/afan-public/w7panel-dev && export KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui && /root/go/bin/ko build --bare --tags=${CNB_BRANCH} --tag-only --sbom=none --platform=all
           # 构建镜像，并推送到镜像仓库
         - name: build
-          script:  export KO_DOCKER_REPO=docker.cnb.cool/i0358/ai-cvm && export KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui && /root/go/bin/ko build --bare --tags=${CNB_BRANCH} --tag-only --sbom=none --platform=all
+          script:  export KO_DOCKER_REPO=docker.cnb.cool/i0358/kbcli-helper && export KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui && /root/go/bin/ko build --bare --tags=${CNB_BRANCH} --tag-only --sbom=none --platform=all
 
         - name: zip
           script: cd ./ui/dist && rm -rf ./dist.zip && zip -r dist.zip ./* 
@@ -48,7 +47,6 @@ v1.0.*:
   tag_push:
     - env:
         - KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui
-        - KO_DOCKER_REPO=ccr.ccs.tencentyun.com/afan-public/w7panel-dev
         # export KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui && export KO_DOCKER_REPO=ccr.ccs.tencentyun.com/afan-public/w7panel 
       imports:
         - https://cnb.cool/i0358/mykey/-/blob/main/218.yml
@@ -72,7 +70,7 @@ v1.0.*:
         #   script: export KO_DOCKER_REPO=ccr.ccs.tencentyun.com/afan-public/w7panel-dev && export KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui && /root/go/bin/ko build --bare --tags=${CNB_BRANCH} --tag-only --sbom=none --platform=all
           # 构建镜像，并推送到镜像仓库
         - name: build
-          script:  export KO_DOCKER_REPO=docker.cnb.cool/i0358/ai-cvm && export KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui && /root/go/bin/ko build --bare --tags=${CNB_BRANCH} --tag-only --sbom=none --platform=all
+          script:  export KO_DOCKER_REPO=docker.cnb.cool/i0358/kbcli-helper && export KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui && /root/go/bin/ko build --bare --tags=${CNB_BRANCH} --tag-only --sbom=none --platform=all
 
         - name: zip
           script: cd ./ui/dist && rm -rf ./dist.zip && zip -r dist.zip ./* 
