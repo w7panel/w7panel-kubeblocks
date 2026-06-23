@@ -1,23 +1,93 @@
 # .cnb.yml
-1.0.*:
+1.1.*:
   tag_push:
     - env:
-        # - KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui
-        # - KO_DOCKER_REPO=ccr.ccs.tencentyun.com/afan-public/kbcli-helper
+        - KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui
+        - KO_DOCKER_REPO=ccr.ccs.tencentyun.com/afan-public/w7panel-dev
         # export KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui && export KO_DOCKER_REPO=ccr.ccs.tencentyun.com/afan-public/w7panel 
+      imports:
+        - https://cnb.cool/i0358/mykey/-/blob/main/218.yml
       docker:
         # 通过此参数控制使用的 Dockerfile 构建镜像必须公开
         image: ccr.ccs.tencentyun.com/afan-public/ubuntu:go-build
         volumes: 
           - /home/workspace/.cache:read-write
-          - /root/.cache:read-write  
+          - /root/.cache:read-write
       stages:
        
+        # - name: upzip
+        #   script: cd ./kodata/ && unzip -o ./kui.zip
         - name: login
           script: /root/go/bin/ko login docker.cnb.cool -u cnb -p ${CNB_TOKEN}
-        - name: build
-          script:  export KO_DOCKER_REPO=docker.cnb.cool/i0358/kbcli-helper && export KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui && /root/go/bin/ko build --bare --tags=${CNB_BRANCH} --tag-only --sbom=none --platform=all
 
+        - name: build-ui 
+          image: node:20
+          script: cd ./ui && npm install && npm run build 
+        # - name: build-dev
+        #   script: export KO_DOCKER_REPO=ccr.ccs.tencentyun.com/afan-public/w7panel-dev && export KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui && /root/go/bin/ko build --bare --tags=${CNB_BRANCH} --tag-only --sbom=none --platform=all
+          # 构建镜像，并推送到镜像仓库
+        - name: build
+          script:  export KO_DOCKER_REPO=docker.cnb.cool/i0358/ai-cvm && export KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui && /root/go/bin/ko build --bare --tags=${CNB_BRANCH} --tag-only --sbom=none --platform=all
+
+        - name: zip
+          script: cd ./ui/dist && rm -rf ./dist.zip && zip -r dist.zip ./* 
+
+        - name: build-helm 
+          script: helm package ./charts/w7panel-ckm --app-version ${CNB_BRANCH} --version ${CNB_BRANCH} 
+        
+        - name: push-zpk
+          script: |
+            curl -L --fail -o /usr/local/bin/zpk https://github.com/w7panel/w7panel-zpk/releases/download/latest/zpk_linux_amd64 && chmod +x /usr/local/bin/zpk
+            zpk login --username=w7admin --password=${ZPK_IDC_PASSWORD} --host=zpk.idc.w7.com
+            zpk use w7panel-kubeblocks
+            zpk attach add --path=./w7panel-ckm-${CNB_BRANCH}.tgz --type=helm
+            zpk attach add --path=./ui/dist/dist.zip --type=frontend
+            zpk push
+# v开头使用测试镜像          
+v1.0.*:
+  tag_push:
+    - env:
+        - KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui
+        - KO_DOCKER_REPO=ccr.ccs.tencentyun.com/afan-public/w7panel-dev
+        # export KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui && export KO_DOCKER_REPO=ccr.ccs.tencentyun.com/afan-public/w7panel 
+      imports:
+        - https://cnb.cool/i0358/mykey/-/blob/main/218.yml
+      docker:
+        # 通过此参数控制使用的 Dockerfile 构建镜像必须公开
+        image: ccr.ccs.tencentyun.com/afan-public/ubuntu:go-build
+        volumes: 
+          - /home/workspace/.cache:read-write
+          - /root/.cache:read-write
+      stages:
+       
+        # - name: upzip
+        #   script: cd ./kodata/ && unzip -o ./kui.zip
+        - name: login
+          script: /root/go/bin/ko login docker.cnb.cool -u cnb -p ${CNB_TOKEN}
+
+        - name: build-ui 
+          image: node:20
+          script: cd ./ui && npm install && npm run build 
+        # - name: build-dev
+        #   script: export KO_DOCKER_REPO=ccr.ccs.tencentyun.com/afan-public/w7panel-dev && export KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui && /root/go/bin/ko build --bare --tags=${CNB_BRANCH} --tag-only --sbom=none --platform=all
+          # 构建镜像，并推送到镜像仓库
+        - name: build
+          script:  export KO_DOCKER_REPO=docker.cnb.cool/i0358/ai-cvm && export KO_DEFAULTBASEIMAGE=ccr.ccs.tencentyun.com/afan-public/ubuntu:24.04-offlineui && /root/go/bin/ko build --bare --tags=${CNB_BRANCH} --tag-only --sbom=none --platform=all
+
+        - name: zip
+          script: cd ./ui/dist && rm -rf ./dist.zip && zip -r dist.zip ./* 
+
+        - name: build-helm 
+          script: helm package ./charts/w7panel-ckm --app-version ${CNB_BRANCH} --version ${CNB_BRANCH} 
+        
+        - name: push-zpk
+          script: |
+            curl -L --fail -o /usr/local/bin/zpk https://github.com/w7panel/w7panel-zpk/releases/download/latest/zpk_linux_amd64 && chmod +x /usr/local/bin/zpk
+            zpk login --username=w7admin --password=${ZPK_IDC_PASSWORD} --host=zpk.idc.w7.com
+            zpk use w7panel-kubeblocksdev
+            zpk attach add --path=./w7panel-ckm-${CNB_BRANCH}.tgz --type=helm
+            zpk attach add --path=./ui/dist/dist.zip --type=frontend
+            zpk push
 $:
   vscode:
     - runner:
