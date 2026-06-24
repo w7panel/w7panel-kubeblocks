@@ -60,7 +60,6 @@ jobs:
           npm run build
           cd dist && rm -rf ./dist.zip && zip -r dist.zip ./*
       - name: Build and push image
-        # working-directory: w7panel-server
         env:
           KO_DOCKER_REPO: ${{ env.KO_DOCKER_REPO }}
           KO_DEFAULTBASEIMAGE: ${{ env.KO_DEFAULTBASEIMAGE }}
